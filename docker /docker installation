@@ -27,4 +27,6 @@ sudo chmod u+x docker.sh
   - sudo apt install docker.io 
   
 - sudo chmod 666 /var/run/docker.sock    --> to execute the docker for other users also 
+
+- docker pull hello-world  ----> test the docker 
   
