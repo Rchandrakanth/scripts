@@ -25,3 +25,9 @@
 
 use the public ip:8843 --> enter in the browser
 
+- Retrieve Argo CD admin password:     
+       username: admin
+       password: --> copy the below command in the terminal u i'll get the password
+  
+             kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
+
