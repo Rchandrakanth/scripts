@@ -24,5 +24,31 @@ systemctl is-active jenkins
  - open browser enter publicip: 8080   
 
   -  sudo cat /var/lib/jenkins/secrets/initialAdminPassword   --> for password 
+
+  ===============================================================================
+
+         http://18.209.60.226:8080/github-webhhook/   ---> add the jenkins ip:8080 and github/webhook in -> repository settings -> webhooks 
+
+    freestyle project :
+
+            GitHub project
+                      Project url :-   add the github project url 
+
+            in source code managemnt :
+                git:-  --> add the github project url 
+
+            in triggers : - 
+                      GitHub hook trigger for GITScm polling   --> check the box 
+
+            in build steps :- 
+                    select execute shell 
+                                  - > type pwd,ls etc ... 
+                                  
+              save  then execute the build 
+                    
+             
+
+
+  
   
 
