@@ -1,0 +1,26 @@
+
+
+  jdk --> eclipse temurin installer 
+  maven --> Config File Provider, Pipeline Maven Integration, maven integration 
+  sonar ---> SonarQube ScannerVersion
+   docker ----> Docker Pipeline,  Docker,
+
+  kubernetes --> Kubernetes, Kubernetes CLI   
+                  based on requirements --> Kubernetes Client API,Kubernetes Credentials
+
+    
+tools :-
+
+      to configure the plugins 
+
+       1. jdk -> jdk17 
+              version : jdk 17.0.9+9    --> install automatically --> adooptium.net
+
+      2. sonarqube-scanner -->  sonar-scanner
+                              -> give any version 
+
+      3. maven --> maven3 ---> use any version 3.9.0
+
+      4. docker --> docker --> install automatically -> select download from docker.com
+  
+
