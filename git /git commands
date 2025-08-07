@@ -16,3 +16,23 @@ git init
 - sudo chown $(whoami) ~/.ssh/id_rsa --> giving owner permission to admin user
 
 
+=================================================
+
+if u want to use the  fork repo ---> create a repository  first 
+
+       Go to https://github.com/jaiswaladi246/Boardgame
+
+   Click on “Fork” (top right).
+
+You’ll get a fork at:
+https://github.com/Rchandrakanth/Boardgame
+
+Now, update your local repo to push to your fork:
+
+git remote set-url origin https://github.com/Rchandrakanth/Boardgame.git
+
+Now push:
+
+git push origin master
+
+
