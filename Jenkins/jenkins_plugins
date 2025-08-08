@@ -22,5 +22,54 @@ tools :-
       3. maven --> maven3 ---> use any version 3.9.0
 
       4. docker --> docker --> install automatically -> select download from docker.com
+
+==============================================================================================================
+
+
+     1. configuring sonar credentials :
+          go to sonarqube server --> administration --> security --> users --> token 
+                                    - enter name sonar-token --> generate token --> copy token 
+
+          - go to manage jenkins --> credentials --> add credentials --> select secret text --> 
+
+                              - paste the sonar token --> give the id and description as sonar-token 
+            - click okay
+
+
+       2. configurig qulatity gate:
+            go to sonarqube server -> administration ->configuration --> webhook 
+                              name= jenkins
+                              url: http://13.218.144.92:8080/sonarqube-webhook/  --> jenkins ip 
+
+            - in pipeline syntax --> select waitforqualitygate" --> select sonar-token 
+                             --> geneate pipeline
+
+                      script {
+                          waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+                      }
+            - paste in sonarqube qualitygate pipeline
+
+    
+        3. publish artifacts to nexus : -
+
+              select --> maven releases --> we have to add the repositories url into pom.xml files 
+                        <id>maven-releases</id>
+                        <url>http://34.207.143.96:8081/repository/maven-releases/</url>
+                    </repository>
+                    <snapshotRepository>
+                        <id>maven-snapshots</id>
+                        <url>http://34.207.143.96:8081/repository/maven-snapshots/</url>
+
+                      add in the pom.xml --> github repositroy xml file 
+
+
+
+
+
+
+
+
+
+
   
 
