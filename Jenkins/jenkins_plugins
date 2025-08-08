@@ -52,7 +52,7 @@ tools :-
     
         3. publish artifacts to nexus : -
 
-              select --> maven releases --> we have to add the repositories url into pom.xml files 
+             -  select --> maven releases --> we have to add the repositories url into pom.xml files 
                         <id>maven-releases</id>
                         <url>http://34.207.143.96:8081/repository/maven-releases/</url>
                     </repository>
@@ -61,6 +61,37 @@ tools :-
                         <url>http://34.207.143.96:8081/repository/maven-snapshots/</url>
 
                       add in the pom.xml --> github repositroy xml file 
+
+           - to access these files -> we need crendentails  --> to access the nexus
+
+                        go to manages jenkins -> managed files --> create --> 
+                                          select global maven settings.xml  --> used for accesing the nexus. we have to give credentails 
+                                          id --> global settings 
+                       - go to settings.xml 
+                                   <server>
+                                      <id>maven-releases</id>
+                                      <username>admin</username>
+                                      <password>chandu</password>
+                                    </server>
+                                     <server>
+                                      <id>maven-snapshots</id>
+                                      <username>admin</username>
+                                      <password>chandu</password>
+                                    </server>
+                       -  click save
+
+                  - go to pipeline syntax --> select withmaven: provide maven environment 
+                                           - select maven3-> jdk17 --> use system defult settings
+                                             in global maven settings --> select myglobalsettings
+
+                                           stage('publish to nexus ') {
+                                              steps {
+                                                  withMaven(globalMavenSettingsConfig: 'global', jdk: 'jdk17', maven: 'maven3', mavenSettingsConfig: '', traceability: true) {
+                                                      sh "mvn deploy"
+                                                  }
+                                  
+
+
 
 
 
