@@ -1,0 +1,53 @@
+admin@ip-172-31-81-199:~/boardgame$ cat boardgame-deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: boardgame-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+#      name: boardgame-pod
+      app: boardgame
+
+  template:
+    metadata:
+      name: boardgame-pod
+      labels:
+#        name: boardgame-pod
+        app: boardgame
+    spec:
+      containers:
+      - name: boardgame-container
+        image: chandu22727/boardgame:latest
+        ports:
+        - containerPort: 8080
+        
+admin@ip-172-31-81-199:~/boardgame$ cat boardgame-pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: boardgame-pod
+  labels:
+    name: boardgame-pod
+    app: boardgame
+spec:
+  containers:
+  - name: boardgame-container
+    image: chandu22727/boardgame:latest
+    ports:
+    - containerPort: 8080
+    
+admin@ip-172-31-81-199:~/boardgame$ cat boardgame-service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: boardgame-service
+spec:
+  type: NodePort
+  selector:
+    app: boardgame
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 30008
