@@ -1,0 +1,86 @@
+pipeline {
+    agent any
+    
+    tools {
+        jdk 'jdk17'
+        maven 'maven3'
+    }
+    environment {
+        SCANNER_HOME= tool 'sonar-scanner'
+    }
+
+    stages {
+        stage('git checkout') {
+            steps {
+                git branch: 'main', credentialsId: 'git-cred', url: 'https://github.com/Rchandrakanth/Boardgame.git'
+            }
+        }
+        stage('compile') {
+            steps {
+                sh "mvn compile"
+            }
+        }
+        
+        stage('trivy file system scan') {
+            steps {
+                sh "trivy fs --format table -o trivy-fs-report.html ."
+            }
+        }
+        stage('sonarQube analysis') {
+            steps {
+                withSonarQubeEnv('sonar') {
+                    sh '''$SCANNER_HOME/bin/sonar-scanner  -Dsonar.projectName=Boardgame -Dsonar.projectKey=Boardgame \
+                        -Dsonar.java.binaries=. '''
+                }
+            }
+        }
+         stage('quality gate') {
+            steps {
+                script{
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+                }
+            }
+        }
+         stage('build jar') {
+            steps {
+                sh "mvn package"
+            }
+        }
+         stage('publish to nexus') {
+            steps {
+                configFileProvider([configFile(fileId: 'global', variable: 'MAVEN_SETTINGS')]) {
+                 sh "mvn deploy --settings $MAVEN_SETTINGS"
+                }
+              
+            }
+        }
+         stage('build and docker image') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
+                     sh "docker build -t chandu22727/boardgame:latest ."
+                     sh 'docker stop myboardgame6  || true'
+                     sh 'docker rm myboardgame6 || true'
+                     sh  'docker run --name myboardgame1 -d -p 8085:8080 chandu22727/boardgame:latest'
+
+                    }
+                }
+            }
+        }
+        stage('docker image scan') {
+            steps {
+                sh "trivy image --format table -o trivy-image-report.html chandu22727/boardgame:latest"
+            }
+        }
+        stage('pushing the docker image') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
+                     sh "docker push chandu22727/boardgame:latest"
+                    }
+                }
+               
+            }
+        }
+    }
+}
