@@ -1,0 +1,89 @@
+pipeline {
+    agent any
+    tools {
+        nodejs 'node20.10'
+    }
+    environment {
+        SCANNER_HOME = tool 'sonar-scanner'
+        SONAR_AUTH_TOKEN = credentials('sonar-token')
+    }
+    stages {
+        stage('Git Checkout') {
+            steps {
+                git credentialsId: 'github-cred', url: 'https://github.com/Rchandrakanth/india_jobs_website.git/'
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+        stage('Build Project') {
+            steps {
+                sh 'npm run build'
+            }
+        }
+         stage('OWASP dependency check') {
+            steps {
+                sh """
+                dependency-check.sh \
+                --project "india_jobs_website" \
+                --scan . \
+                --format HTML \
+                --out dependency-check-report
+                  """
+            }
+        }
+        
+        stage('Trivy Scan') {
+            steps {
+                sh 'trivy fs --format table -o trivy-fs-report.html .'
+            }
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonar') {
+                    sh """
+                        ${SCANNER_HOME}/bin/sonar-scanner \
+                        -Dsonar.projectKey=india_jobs_website \
+                        -Dsonar.sources=. \
+                        -Dsonar.host.url=http://54.196.136.233:9000/ \
+                        -Dsonar.login=$SONAR_AUTH_TOKEN
+                    """
+                }
+            }
+        }
+        stage('Quality Gate') {
+            steps {
+                waitForQualityGate abortPipeline: true
+            }
+        }
+        stage('build and docker image') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
+                     sh "docker build -t chandu22727/india_jobs:latest ."
+                     sh 'docker stop indiajob1  || true'
+                     sh 'docker rm indiajob1 || true'
+                     sh  'docker run --name indiajob2 -d -p 8085:8080 chandu22727/india_jobs:latest'
+
+                    }
+                }
+            }
+        }
+        stage('docker image scan') {
+            steps {
+                sh "trivy image --format table -o trivy-image-report.html chandu22727/india_jobs:latest"
+            }
+        }
+        stage('docker push '){
+            steps{
+                script{
+                    withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
+                        sh 'docker push chandu22727/india_jobs:latest'
+                    }
+                }
+            }
+        }
+    }
+}
