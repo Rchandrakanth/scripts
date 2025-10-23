@@ -1,0 +1,24 @@
+
+root@ip-172-31-17-197:/home/admin# history
+    1  sudo nano common.sh          --> kubestar github
+    2  chmod u+x common.sh
+    3  sudo ./common.sh
+    4  sudo apt install docker.io
+    5  sudo rm -f /etc/apt/sources.list.d/docker.list
+    6  sudo apt update
+    7  sudo apt install -y ca-certificates curl gnupg lsb-release apt-transport-https software-properties-common
+    8  sudo apt install -y containerd
+    9  sudo systemctl enable --now containerd
+   10  sudo mkdir -p /etc/containerd
+   11  sudo containerd config default | sudo tee /etc/containerd/config.toml
+   12  sudo apt install -y kubelet kubeadm kubectl
+   13  kubeadm version
+   14  kubectl version --client
+   15  kubelet --version
+   16  sudo nano /etc/containerd/config.toml
+   17  sudo systemctl restart containerd
+   18  sudo systemctl enable containerd
+   19  sudo systemctl status containerd
+   20  sudo swapoff -a
+   21  sudo sed -i '/ swap / s/^/#/' /etc/fstab
+   22  sudo kubeadm join 172.31.18.247:6443 --token r50qt8.riynvlwx7ehv9q1x --discovery-token-ca-cert-hash sha256:796cf5cfed9420fd5c1a502f6ee135930bfc73add7ef849d2771f99114489846
