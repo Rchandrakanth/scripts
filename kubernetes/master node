@@ -1,0 +1,6 @@
+ 98  sudo ./common.sh
+   99  sudo apt install docker.io
+  100  sudo nano master.sh
+  101  chmod u+x master.sh
+  102  sudo ./master.sh
+  103  kubectl get nodes -o wide
